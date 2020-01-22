@@ -5,9 +5,9 @@
 				<h1>{{ msg }}</h1>
 			</div>
 		</div>
-		<control-list-item :name="'Control 1'" :focus="focus" sum />
-		<control-list-item :name="'Control 2'" :focus="focus" constant />
-		<control-list-item :name="'Control 3'" :focus="focus" />
+		<control-list-item :name="'Control 1'" sum />
+		<control-list-item :name="'Control 2'" constant />
+		<control-list-item :name="'Control 3'" />
 	</div>
 </template>
 
@@ -22,14 +22,6 @@ export default {
 		msg: String,
 		default() {
 			return 'Test App';
-		},
-	},
-	computed: {
-		elements () {
-			return document.getElementsByClassName('input');
-		},
-		focus() {
-			return '';
 		},
 	},
 }
