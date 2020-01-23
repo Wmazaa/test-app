@@ -5,9 +5,9 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state:
     {
-        figure1: 0,
-        figure2: 0,
-        figure3: 0,
+        figure1: '',
+        figure2: '',
+        figure3: '',
         selected: {
             input1: false,
             input2: false,

@@ -7,10 +7,10 @@
 							{{ name }}
 						</div>
 						<div class="col-3">
-							<div class="row">
-								<div v-on-clickaway="removeSelection" class="input-group" @keydown="handleKeyPress($event)">
+							<div v-on-clickaway="removeSelection" class="row">
+								<div class="input-group" @keydown="handleKeyPress($event)">
                                     <div v-if="!selected" class="btn-group">
-                                        <button type="button" class="btn btn-link" @click="select()">
+                                        <button type="button" class="btn btn-link" @click="select">
                                             {{ formattedValue }}
                                         </button>
                                         <button
@@ -23,19 +23,27 @@
                                         >
                                         </button>
                                     </div>
-									<input
+                                    <input
                                         :ref="current.input"
                                         v-if="selected"
-										v-model.number="value"
-										v-mask="mask"
-										type="text"
-										class="form-control"
-									>
+                                        v-model.number="value"
+                                        v-mask="mask"
+                                        type="text"
+                                        class="form-control shadow-none"
+                                    >
+                                    <div v-if="selected" class="input-group-prepend">
+                                        <div class="btn-group-vertical">
+                                            <button type="button" class="btn btn-link btn-icon" @click="add">
+                                                <i class="fa fa-arrow-up" />
+                                            </button>
+                                            <button type="button" class="btn btn-link btn-icon" @click="subtract">
+                                                <i class="fa fa-arrow-down" />
+                                            </button>
+                                        </div>
+                                    </div>
 								</div>
-							</div>
-							<div v-if="sum || constant" class="row pt-1">
-								<a v-show="sum && selected" href="#" class="badge badge-primary" @click="getSum">сумма</a>
-                                <a v-show="constant && selected" href="#" class="badge badge-primary" @click="addConstant">константа</a>
+                                <button v-show="sum && selected" type="button" class="btn btn-link additional" @click="getSum">сумма</button>
+                                <button v-show="constant && selected" type="button" class="btn btn-link additional" @click="addConstant">константа</button>
 							</div>
 						</div>
 					</div>
@@ -70,10 +78,14 @@ export default {
             type: Boolean,
             default: false,
         },
+        constantValue: {
+            type: Number,
+            default: 0,
+        },
     },
     data() {
         return {
-            value: 0,
+            value: '',
         };
     },
     computed: {
@@ -112,20 +124,25 @@ export default {
     watch: {
         selected() {
             if(this.selected) {
-                // eslint-disable-next-line no-console
-                // console.log(document.getElementsByClassName('form-control')[0]);
                 this.$nextTick(() => document.getElementsByClassName('form-control')[0].focus());
             }
         },
     },
     methods: {
+        add() {
+            this.value++;
+        },
         addConstant() {
-            this.value = 1000;
-            // this.$store.commit('figure2', this.value);
+            this.value = this.constantValue;
+            this.focus();
         },
 		getSum() {
 			this.value = this.$store.getters.figure2 + this.$store.getters.figure3;
-			this.$store.commit('figure1', this.value);
+            this.$store.commit('figure1', this.value);
+            this.focus();
+        },
+        focus() {
+            this.$nextTick(() => document.getElementsByClassName('form-control')[0].focus());
         },
         handleKeyPress(event) {
             switch (event.keyCode) {
@@ -150,7 +167,6 @@ export default {
         },
         removeSelection(save = true) {
             if (save) {
-                this.value = this.value ? this.value : 0;
                 this.$store.commit(this.current.figure, this.value);
             } else {
                 this.value = this.$store.getters[this.current.figure];
@@ -168,15 +184,37 @@ export default {
             const index = inputs.indexOf(this.current.input) > 0 ? inputs.indexOf(this.current.input) - 1 : 2;
             this.$store.commit('select', inputs[index]);
         },
+        subtract() {
+            if (this.value > 0) {
+                this.value--;
+            }
+        },
     },
 }
 
 </script>
 
 <style scoped>
+    .form-control {
+        border-radius: 0;
+        outline: none;
+        border: 1px solid grey;
+    }
+    .additional {
+        color: #007bff !important;
+        font-size: 10px;
+        text-decoration: none;
+        top: -2px;
+        padding: 0;
+    }
+    .additional:hover {
+        color: #007bff;
+        text-decoration: none;
+    }
     .btn-link {
         color: black;
         white-space: pre;
+        padding: 0.25rem;
     }
     .btn-link:hover {
         color: #007bff;
@@ -195,5 +233,10 @@ export default {
     }
     .btn-group>.btn:not(:first-child) {
         margin-left: -0.5rem;
+    }
+    .btn-icon {
+        max-height: 20px;
+        margin-left: -1px;
+        font-size: 8px;
     }
 </style>

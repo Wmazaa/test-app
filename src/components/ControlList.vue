@@ -6,7 +6,7 @@
 			</div>
 		</div>
 		<control-list-item :name="'Control 1'" sum />
-		<control-list-item :name="'Control 2'" constant />
+		<control-list-item :name="'Control 2'" :constant-value="1000" constant />
 		<control-list-item :name="'Control 3'" />
 	</div>
 </template>
@@ -30,5 +30,9 @@ export default {
 <style scoped>
 	input::-webkit-inner-spin-button {
 		opacity: 1;
+	}
+	.form-control {
+		margin-right: 2rem;
+
 	}
 </style>
